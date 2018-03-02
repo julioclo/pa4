@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>pa4</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Julio Cesar Lopez Otero" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# pa4
+## ⚔<br/>with xaringan
+### Julio Cesar Lopez Otero
+### 2018/02/27
+
+---
+
+### Load dataset
+
+
+
+
+
+
+
+```r
+str(dataset)
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	20 obs. of  5 variables:
+##  $ obs        : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ s_cog      : num  3285 4664 4680 4874 4879 ...
+##  $ s_skewness : num  -1.22 -1.19 -1.07 -1.06 -1.03 ...
+##  $ sh_cog     : num  2409 2823 2898 3617 3668 ...
+##  $ sh_skewness: num  -0.2481 -0.0165 0.1177 0.1978 0.2118 ...
+##  - attr(*, "spec")=List of 2
+##   ..$ cols   :List of 5
+##   .. ..$ obs        : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_integer" "collector"
+##   .. ..$ s_cog      : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
+##   .. ..$ s_skewness : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
+##   .. ..$ sh_cog     : list()
+##   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
+##   .. ..$ sh_skewness: list()
+##   .. .. ..- attr(*, "class")= chr  "collector_double" "collector"
+##   ..$ default: list()
+##   .. ..- attr(*, "class")= chr  "collector_guess" "collector"
+##   ..- attr(*, "class")= chr "col_spec"
+```
+---
+### Tidy dataset
+
+```r
+dataset1 &lt;- dataset %&gt;%
+  gather(., key = "category", value = "values", -obs, na.rm = TRUE, convert = FALSE,
+         factor_key = FALSE) %&gt;%
+  separate(., col = category, into = c("phon", "variable"), sep = "_") %&gt;%
+  spread(., key = variable, value = values)
+```
+---
+### Descriptive statistics
+S  | Mean | Standard deviation |  Median
+------------- | ------------- | ------------- | -------------
+COG  | 5690.5238762  | 913.2537201 | 5859.6755041
+Skewness  | -0.7714211  | 0.2834032 | -0.7799646
+
+SH  | Mean | Standard deviation |  Median
+------------- | ------------- | ------------- | -------------
+COG  | 3994.8227851  | 697.0921819 | 3956.026488
+Skewness  | 0.5527295  | 0.441112 | 0.5314921
+---
+##### Make a boxplot of center of gravity as a function of phoneme.
+
+```r
+dataset1 %&gt;%
+  ggplot(., aes(x = phon, y = cog, fill = phon)) +
+  geom_boxplot()
+```
+
+![](index_files/figure-html/boxplot-1.png)&lt;!-- --&gt;
+
+```r
+  labs(x = 'Phoneme', y = 'Center of gravity')
+```
+
+```
+## $x
+## [1] "Phoneme"
+## 
+## $y
+## [1] "Center of gravity"
+## 
+## attr(,"class")
+## [1] "labels"
+```
+---
+##### Skewness as a function of phoneme.
+
+```r
+ggplot(data = dataset1, aes(x = phon, y = skewness)) +
+    stat_summary(fun.data = mean_cl_boot, geom = 'pointrange')
+```
+
+![](index_files/figure-html/statistical transformation-1.png)&lt;!-- --&gt;
+---
+
+```r
+dataset1_s &lt;- dataset1 %&gt;%
+  filter(., phon == 's')
+
+model1 &lt;- lm(cog ~ skewness, data = dataset1_s)
+
+summary(model1)
+```
+
+```
+## 
+## Call:
+## lm(formula = cog ~ skewness, data = dataset1_s)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1060.74   -21.72    58.96   123.00   405.24 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   8027.2      212.3   37.80  &lt; 2e-16 ***
+## skewness      3029.1      259.1   11.69 7.69e-10 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 320.1 on 18 degrees of freedom
+## Multiple R-squared:  0.8836,	Adjusted R-squared:  0.8771 
+## F-statistic: 136.6 on 1 and 18 DF,  p-value: 7.691e-10
+```
+---
+#Residuals:
+
+Min   |    1Q  | Median  |     3Q   |   Max 
+------------- | ------------- | ------------- | -------------  | -------------
+-1060.74 |  -21.72  |  58.96 |  123.00  | 405.24 
+
+#Coefficients:
+
+---   | Estimate | Std. Error | t value | p-vale 
+------------- | ------------- | ------------- | -------------  | -------------     
+(Intercept)  | 8027.2    |  212.3 |  37.80  | &lt; 2e-16 ***
+skewness     | 3029.1    |  259.1 |  11.69 | 7.69e-10 ***
+
+
+Residual standard error | Multiple R-squared | Adjusted R-squared | F-statistic | p-value
+------------- | ------------- | ------------- | ------------- | -------------
+320.1 on 18 degrees of freedom | 0.8836 |  0.8771 | 136.6 on 1 and 18 DF | 7.691e-10
+---
+###### Model's scatterplot
+
+```r
+dataset1_s %&gt;%
+  ggplot(., aes(x = cog, y = skewness, color = skewness)) +
+  geom_point() +
+  geom_smooth(method = lm)
+```
+
+![](index_files/figure-html/scatterplot de model1-1.png)&lt;!-- --&gt;
+---
+### Model diagnostics
+
+```r
+### Mean of model's residuals
+mean(model1$residuals)
+```
+
+```
+## [1] 1.136591e-14
+```
+
+```r
+### Test for correlation
+cor.test(dataset1_s$cog, model1$residuals)
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  dataset1_s$cog and model1$residuals
+## t = 1.5399, df = 18, p-value = 0.141
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.1193645  0.6808978
+## sample estimates:
+##       cor 
+## 0.3411777
+```
+---
+
+```r
+### Global Validation of Linear Model Assumptions
+gvmodel &lt;- gvlma(model1)
+summary(gvmodel)
+```
+
+```
+## 
+## Call:
+## lm(formula = cog ~ skewness, data = dataset1_s)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1060.74   -21.72    58.96   123.00   405.24 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   8027.2      212.3   37.80  &lt; 2e-16 ***
+## skewness      3029.1      259.1   11.69 7.69e-10 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 320.1 on 18 degrees of freedom
+## Multiple R-squared:  0.8836,	Adjusted R-squared:  0.8771 
+## F-statistic: 136.6 on 1 and 18 DF,  p-value: 7.691e-10
+## 
+## 
+## ASSESSMENT OF THE LINEAR MODEL ASSUMPTIONS
+## USING THE GLOBAL TEST ON 4 DEGREES-OF-FREEDOM:
+## Level of Significance =  0.05 
+## 
+## Call:
+##  gvlma(x = model1) 
+## 
+##                     Value   p-value                   Decision
+## Global Stat        54.192 4.797e-11 Assumptions NOT satisfied!
+## Skewness           16.450 4.995e-05 Assumptions NOT satisfied!
+## Kurtosis           22.496 2.106e-06 Assumptions NOT satisfied!
+## Link Function       8.949 2.777e-03 Assumptions NOT satisfied!
+## Heteroscedasticity  6.298 1.209e-02 Assumptions NOT satisfied!
+```
+---
+### GVLMA Plot
+
+```r
+plot(gvmodel)
+```
+
+![](index_files/figure-html/glvmodel-1.png)&lt;!-- --&gt;
+---
+### Write up the results
+The scatterplot showed the linear model fitted for center of gravity as a function of skewness for the [s] segments. The relationship between center of gravity and skewness is significant (Estimate = 3029.1, SE = 259.1 t = 11.69, p &lt; .001). There was a positive correlation between the two variables, Multiple R-squared: 0.8836, Adjusted R-squared: 0.8771. The mean of the residual values was 1.136591e-14.
+A Pearson's product-moment coefficient was computed to assess the relationship between center of gravity and sknewness for the [s] segments and a positive correlation was found (t = 1.5399, df = 18, p-value = 0.141, cor = 0.3411777).
+Finally, a gvlma was run and a level of significance of 0.05 was found.
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

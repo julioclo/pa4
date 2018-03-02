@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"pa4\"\nsubtitle: \"⚔<br/>with xaringan\"\nauthor: \"Julio Cesar Lopez Otero\"\ndate: \"2018/02/27\"\noutput:\n  xaringan::moon_reader:\n    lib_dir: libs\n    nature:\n      highlightStyle: github\n      highlightLines: true\n      countIncrementalSlides: false\n---\n\n```{r setup, include=FALSE}\noptions(htmltools.dir.version = FALSE)\n```\n\n```{r load packages, include = FALSE}\nlibrary(untidydata)\nlibrary(xaringan)\nlibrary(plot3D)\nlibrary(tidyverse)\n```\n\n```{r load dataset, include = FALSE}\ndataset <- read_csv(\"../data_raw/fricatives.csv\")\n```\n\n```{r str data}\nstr(dataset)\n```\n---\n```{r}\ndataset %>%\n  select(., -obs, s_skewness, sh_skewness) %>% \n  gather(., 's_cog', 'sh_cog', key = cog, val = cogvalue) %>%\n  select(., -obs, -cog, -cogvalue) %>%\n  gather(., 's_skewness', 'sh_skewness', key = sknewness, val = skewnessvalue)\n  gather(., 's_skewness', 'sh_skewness', key = sknewness, val = skewnessvalue, -obs, -cog, -cogvalue) %>%\n  separate(., col = cog, into = c('phon', 'cog2'), spe =\"_\")\n```\n",
+    "created" : 1519761281636.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "312539558",
+    "id" : "1690243B",
+    "lastKnownWriteTime" : 1519768399,
+    "last_content_update" : 1519768399479,
+    "path" : "~/Desktop/pa4/slides/index.Rmd",
+    "project_path" : "slides/index.Rmd",
+    "properties" : {
+        "last_setup_crc32" : "819DBC54e907aa8d",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
