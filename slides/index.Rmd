@@ -121,6 +121,5 @@ plot(gvmodel)
 ```
 ---
 ### Write up the results
-The scatterplot showed the linear model fitted for center of gravity as a function of skewness for the [s] segments. The relationship between center of gravity and skewness is significant (Estimate = 3029.1, SE = 259.1 t = 11.69, p < .001). There was a positive correlation between the two variables, Multiple R-squared: 0.8836, Adjusted R-squared: 0.8771. The mean of the residual values was 1.136591e-14.
-A Pearson's product-moment coefficient was computed to assess the relationship between center of gravity and sknewness for the [s] segments and a positive correlation was found (t = 1.5399, df = 18, p-value = 0.141, cor = 0.3411777).
-Finally, a gvlma was run and a level of significance of 0.05 was found.
+The production data were analyzed using a linear model displaying center of gravity as a function of skewness of the [s] segments. A Pearson's product-moment coefficient was computed to assess the relationship between center of gravity and skewness for the [s] segments and a positive correlation was found (t(18)= 1.5399, , p = .141, cor = 0.341). Finally, a gvlma was run and a level of significance of 0.05 was found.
+On the other hand, the model shows a positive correlation of center of gravity as a function of skewness. Also, it found that the relation of center of gravity as a function of skewness is significant (β = 3029.1, SE = 259.1 t = 11.69, p < .001), with a multiple R-squared of .0884 and an adjusted R-squared of .887.
